@@ -25,7 +25,7 @@ import random
 f = open('gc.txt', 'r')
 #print(f.read())
 
-with open('le4505a.txt', 'r') as f:
+with open('queen6.txt', 'r') as f:
     w = int(f.readline())
     arr=[[0 for i in range(w)]for j in range(w)]
     #[print(arr[i]) for i in range(w)]
@@ -64,7 +64,7 @@ def checkValidity(chromosome, parentLen ):
     isValid = True
     # check if adjacent matrix nodes are the same color
     for i in range(0, parentLen):
-        for j in range(i, parentLen):
+        for j in range(0, parentLen):
             if (macierz[i][j] == 1 and chromosome[i] == chromosome[j]):
                 isValid = False
     return isValid
@@ -82,19 +82,41 @@ def mutate(child):
             child[i] = random.randrange(0, max(tab))
     return child
 
-def cross(parent1, parent2):
+def cross(parent1, parent2, mutation_rate=0.5):
         child = []
         for i in range(0, len(parent1)):
             if random.random() < 0.5:
                 child.append(parent1[i])
             else:
                 child.append(parent2[i])
-        if random.random() < 0.5:
+        if random.random() < mutation_rate:
           child = mutate(child)
           return child
         else:
           return child
 # cross funciton with mutation
+def cross2(parent1, parent2, mutation_rate=0.5):
+  # crossover two parents to create two children
+  child1 = []
+  child2 = []
+  # split parents by half
+  parent1_len = len(parent1)
+  parent2_len = len(parent2)
+  split = int(parent1_len / 2)
+  # crossover
+  for i in range(0, split):
+    child1.append(parent1[i])
+    child2.append(parent2[i])
+  for i in range(split, parent1_len):
+    child1.append(parent2[i])
+    child2.append(parent1[i])
+  # mutate children
+  if random.random() < mutation_rate:
+    child1 = mutate(child1)
+  if random.random() < mutation_rate:
+    child2 = mutate(child2)
+  return child1
+
 
 
 def fitness(chromosome):
@@ -108,44 +130,48 @@ def fitness(chromosome):
 
 
 
-
-def genetic(greedy_solution, number_of_generations, population_size):
+def genetic(greedy_solution, number_of_generations, population_size, mutation_rate):
     # make population
-    for generation in range(0, number_of_generations):
-      population = []
-      parentlen = len(greedy_solution)
-      population.append(greedy_solution)
-      maxcolor=max(tab)
+  population = []
+  parentlen = len(greedy_solution)
+  population.append(greedy_solution)
+  tmaxcolor=max(tab)
+
+  for generation in range(0, number_of_generations):
       for i in range(0, population_size):
           population.append([random.randrange(0, maxcolor) for i in range(0, parentlen)])
-      
-      # cross population
+      # cross population``
       for i in range(0,population_size):
-          population.append(cross(population[i], population[i+1]))
+          population.append(cross(population[i], population[i+1], mutation_rate))
       # # reduce population
 
       population = list(filter(lambda x: checkValidity(x, parentlen), population))
-      population = list(filter(lambda x: fitness(x) <= max(tab), population))
+      # print(population[0])
+      # population = list(filter(lambda x: fitness(x) <= max(tab), population))
       # sort by fist element in array
       # population = sorted(population, key=fitness)
-      for index in range(0, len(population)): 
-        # print(population[index], fitness(population[index]))
-        population[index] = [fitness(population[index]), population[index]]
-          #population.sort() 
-      population.sort(key=lambda x: x[0])
+      # for index in range(0, len(population)): 
+      #   # print(population[index], fitness(population[index]))
+      #   if isinstance(population[index], list):
+      #     continue
+      #   else:
+      #     population[index] = [fitness(population[index]), population[index]]
+      #     #population.sort() 
+      
+      # population.sort(key=lambda x: x[0])
 
       # population.sort()
      # filter population\
       # remove worst
-      population = population[0:population_size]
+      # population = population[0:population_size]
       # print best
-      # print("Generation: " + str(generation) + " Best: " + str(population[0][0]))       
+      print("Generation: " + str(generation) + " Best: " + str(population[0][0]))       
 
-      print("Generation: " + str(generation) + " Best: " + str(population[0][0]+1))       
-      # [print(element, checkValidity(element,parentlen)) for element in population]
+      [print(element[1], element[0]) for element in population[0:10]]
+      # print("Generation: " + str(generation) + " Best: " + str(population[0][0]+1))       
       # print()
 
-genetic(tab,1000,20)
+genetic(tab,1,20,1)
   
     
 
