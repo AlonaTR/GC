@@ -24,7 +24,7 @@ for i in range(n):
 f = open('gc.txt', 'r')
 #print(f.read())
 
-with open('instancja2.txt', 'r') as f:
+with open('inst.txt', 'r') as f:
     w = int(f.readline())
     arr=[[0 for i in range(w)]for j in range(w)]
     #[print(arr[i]) for i in range(w)]
@@ -56,9 +56,20 @@ def KolorujZachlannie(macierz):
 tab= KolorujZachlannie(arr)
 
 print("Węzeł\tKolor")
-for i in range(0, w):
-  print(str(i+1) + "\t" + str(tab[i]+1))
-print(max(tab)+1)
+
+def checkValidity(chromosome, parentLen ):
+    # check just adjacent colors
+    isValid = True
+    for i in range(0, parentLen):
+        if (chromosome[i] == chromosome[(i+1)%parentLen]):
+            isValid = False
+            break
+    return isValid
+
+# for i in range(0, w):
+#   print(str(i+1) + "\t" + str(tab[i]+1))
+# print(max(tab)+1)
+print(tab)
 
 
 # mutate child
@@ -94,33 +105,35 @@ def fitness(chromosome):
 
 
 
-def genetic(greedy_solution):
+def genetic(greedy_solution, number_of_generations, population_size):
     # make population
-    for i in range(0, 100):
+    for generation in range(0, number_of_generations):
       population = []
-      w = len(greedy_solution)
+      parentlen = len(greedy_solution)
       population.append(greedy_solution)
-      for i in range(0, 100):
-          population.append(random.sample(range(0, w), w))
+      maxcolor=max(tab)
+      for i in range(0, population_size):
+          population.append([random.randrange(0, maxcolor) for i in range(0, parentlen)])
+      
       # cross population
-      for i in range(0, 99):
-          population[i] = cross(population[i], population[i+1])
-      # reduce population
+      for i in range(0,population_size):
+          population.append(cross(population[i], population[i+1]))
+      # # reduce population
       for i in range(0, 100): 
           population[i] = [fitness(population[i]), population[i]]
           #population.sort() 
-      population.sort()
-           
+      # population.sort()
+     # filter population\
+      population = filter(lambda x: checkValidity(x, parentlen), population)
       # remove worst
       #population = population[0:50]
       # print best
 
-      print("Generation: " + str(i) + " Best: " + str(population[0][0]))      
-      #print(population[0][0]) 
-      
-      
+      # print("Generation: " + str(generation) + " Best: " + str(population[0][0]))       
+      [print(element, checkValidity(element,parentlen)) for element in population]
+      # print()
 
-genetic(tab)
+genetic(tab,1,10)
   
     
 
