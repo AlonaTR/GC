@@ -57,7 +57,7 @@ def KolorujZachlannie(macierz):
 
 tab,macierz= KolorujZachlannie(arr)
 
-print("Węzeł\tKolor")
+# print("Węzeł\tKolor")
 
 def checkValidity(chromosome, parentLen ):
     # check just adjacent colors
@@ -72,7 +72,7 @@ def checkValidity(chromosome, parentLen ):
 # for i in range(0, w):
 #   print(str(i+1) + "\t" + str(tab[i]+1))
 print("Greedy solution", max(tab)+1)
-print(tab)
+# print(tab)
 
 
 # mutate child
@@ -125,25 +125,27 @@ def genetic(greedy_solution, number_of_generations, population_size):
       # # reduce population
 
       population = list(filter(lambda x: checkValidity(x, parentlen), population))
-      # population = list(filter(lambda x: fitness(x) <= max(tab), population))
-      # sort by fitness
+      population = list(filter(lambda x: fitness(x) <= max(tab), population))
+      # sort by fist element in array
       # population = sorted(population, key=fitness)
-      for index in range(0, population_size): 
+      for index in range(0, len(population)): 
         # print(population[index], fitness(population[index]))
         population[index] = [fitness(population[index]), population[index]]
           #population.sort() 
+      population.sort(key=lambda x: x[0])
+
       # population.sort()
      # filter population\
       # remove worst
-      # population = population[0:population_size]
+      population = population[0:population_size]
       # print best
       # print("Generation: " + str(generation) + " Best: " + str(population[0][0]))       
 
-      print("Generation: " + str(generation) + " Best: " + str(population[0][0]))       
+      print("Generation: " + str(generation) + " Best: " + str(population[0][0]+1))       
       # [print(element, checkValidity(element,parentlen)) for element in population]
       # print()
 
-genetic(tab,1,3)
+genetic(tab,1000,20)
   
     
 
