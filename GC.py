@@ -1,3 +1,4 @@
+import math
 import random
 # # n=random.randrange(20,50)
 # n=10
@@ -25,7 +26,7 @@ import random
 f = open('gc.txt', 'r')
 #print(f.read())
 
-with open('queen6.txt', 'r') as f:
+with open('myciel4.txt', 'r') as f:
     w = int(f.readline())
     arr=[[0 for i in range(w)]for j in range(w)]
     #[print(arr[i]) for i in range(w)]
@@ -58,6 +59,7 @@ def KolorujZachlannie(macierz):
 tab,macierz= KolorujZachlannie(arr)
 
 # print("Węzeł\tKolor")
+# [print(x) for x in macierz]
 
 def checkValidity(chromosome, parentLen ):
     # check just adjacent colors
@@ -81,6 +83,7 @@ def mutate(child):
         if random.random() < 0.5:
             child[i] = random.randrange(0, max(tab))
     return child
+
 
 def cross(parent1, parent2, mutation_rate=0.5):
         child = []
@@ -135,43 +138,52 @@ def genetic(greedy_solution, number_of_generations, population_size, mutation_ra
   population = []
   parentlen = len(greedy_solution)
   population.append(greedy_solution)
-  tmaxcolor=max(tab)
+  maxcolor=max(tab)
+
+  
 
   for generation in range(0, number_of_generations):
       for i in range(0, population_size):
-          population.append([random.randrange(0, maxcolor) for i in range(0, parentlen)])
-      # cross population``
+          population.append([random.randrange(0, maxcolor +1 ) for i in range(0, parentlen)])
+      # cross population
       for i in range(0,population_size):
           population.append(cross(population[i], population[i+1], mutation_rate))
       # # reduce population
+    
+      # fix check validity !!!
+
 
       population = list(filter(lambda x: checkValidity(x, parentlen), population))
       # print(population[0])
       # population = list(filter(lambda x: fitness(x) <= max(tab), population))
       # sort by fist element in array
-      # population = sorted(population, key=fitness)
+      population = sorted(population, key=fitness)
       # for index in range(0, len(population)): 
       #   # print(population[index], fitness(population[index]))
       #   if isinstance(population[index], list):
       #     continue
       #   else:
       #     population[index] = [fitness(population[index]), population[index]]
-      #     #population.sort() 
+          #population.sort() 
       
       # population.sort(key=lambda x: x[0])
 
-      # population.sort()
-     # filter population\
-      # remove worst
-      # population = population[0:population_size]
-      # print best
-      print("Generation: " + str(generation) + " Best: " + str(population[0][0]))       
+    #   population.sort()
+    #  filter population\
+    #   remove worst
+    #   population = population[0:population_size]
+    #   print best
+      if(len(population)> 0):
+         print("Generation: " + str(generation) + " Best: " + str(fitness(population[0])+1))       
+      print("g" + str(generation))
 
-      [print(element[1], element[0]) for element in population[0:10]]
+      population = population[:population_size]
+      # [print(element[1], element[0]) for element in population[0:10]]
       # print("Generation: " + str(generation) + " Best: " + str(population[0][0]+1))       
       # print()
 
-genetic(tab,1,20,1)
+# genetic(tab,1,20,1)
+genetic(greedy_solution = tab, number_of_generations = 1000, population_size=50, mutation_rate=0.5)
   
     
 
